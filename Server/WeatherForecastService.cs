@@ -5,27 +5,16 @@ namespace BackgroundProgressNotifications.Server
 {
     public class WeatherForecastService : BackgroundService
     {
-        private readonly IHubContext<DopplerRadarHub, IDopplerRadar> _hubContext;
-        private readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly IHubContext<WeatherForecastServiceHub, IWeatherForecastServiceHub> _hubContext;
+        private readonly IWeatherRadarService _weatherRadarService;
 
-        public WeatherForecastService(IHubContext<DopplerRadarHub, IDopplerRadar> hubContext)
-        {
-            this._hubContext = hubContext;
-        }
+        public WeatherForecastService(IHubContext<WeatherForecastServiceHub, IWeatherForecastServiceHub> hubContext, IWeatherRadarService weatherRadarService) => (_hubContext, _weatherRadarService) = (hubContext, weatherRadarService);
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while(!stoppingToken.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
-                await _hubContext.Clients.All.UpdateForecast(new WeatherForecast
-                {
-                    Date = DateTime.Now.AddMilliseconds(3000),
-                    TemperatureC = Random.Shared.Next(-20, 55),
-                    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-                });
+                await _hubContext.Clients.All.UpdateForecast(_weatherRadarService.GetForecast());
                 await Task.Delay(3000, stoppingToken);
             }
         }

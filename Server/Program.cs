@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddHostedService<WeatherForecastService>();
+builder.Services.AddSingleton<IWeatherRadarService, DopplerRadarService>();
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true)
     .AddMessagePackProtocol();
 
@@ -33,9 +34,9 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
-app.UseEndpoints(endpoints => 
+app.UseEndpoints(endpoints =>
 {
-    endpoints.MapHub<DopplerRadarHub>("/weather");
+    endpoints.MapHub<WeatherForecastServiceHub>("/weather");
 });
 app.MapFallbackToFile("index.html");
 

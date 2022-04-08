@@ -2,8 +2,8 @@
 
 namespace BackgroundProgressNotifications.Server
 {
-    public interface IDopplerRadar
+    public interface IWeatherRadarService
     {
-        Task UpdateForecast(WeatherForecast forecast);
+        WeatherForecast GetForecast();
     }
 }
